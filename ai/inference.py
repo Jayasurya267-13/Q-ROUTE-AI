@@ -1,16 +1,23 @@
-import pandas as pd
+from pathlib import Path
 import joblib
+import pandas as pd
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 class TrafficPredictor:
 
     def __init__(
         self,
-        model_path="models/traffic_model.pkl",
-        training_data_path="data/train.csv"
+        model_path=None,
+        training_data_path=None
     ):
 
         # Load trained AI model
+        model_path = Path(model_path) if model_path else ROOT / "models/traffic_model.pkl"
+        training_data_path = Path(training_data_path) if training_data_path else ROOT / "data/train.csv"
+        if not model_path.exists() or not training_data_path.exists():
+            raise FileNotFoundError(f"Required traffic model/data missing: {model_path}, {training_data_path}")
         self.model = joblib.load(model_path)
 
         # Load training data for congestion thresholds
